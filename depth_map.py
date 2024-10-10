@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 from PIL import Image
+import os
 import matplotlib
 import matplotlib.cm
 
@@ -48,6 +49,11 @@ def get_zoe_depth_map(image):
     depth_colored = colorize(depth_map, cmap="gray_r")
     return depth_colored
 
+
+output_dir = "outputs"
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
 image_path = "img.png"
 input_image = Image.open(image_path)
 depth_image = get_zoe_depth_map(input_image)
@@ -55,5 +61,11 @@ depth_image = get_zoe_depth_map(input_image)
 combined_image = Image.new('RGB', (input_image.width + depth_image.width, input_image.height))
 combined_image.paste(input_image, (0, 0))
 combined_image.paste(depth_image, (input_image.width, 0))
+
+depth_image_path = os.path.join(output_dir, "depth_image.png")
+combined_image_path = os.path.join(output_dir, "combined_image.png")
+
+depth_image.save(depth_image_path)
+combined_image.save(combined_image_path)
 
 combined_image.show()
